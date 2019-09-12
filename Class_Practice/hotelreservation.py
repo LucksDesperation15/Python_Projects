@@ -1,49 +1,15 @@
 # Hotel Reservation Project
 import datetime as dt
 import random
-import re
+
 # Create Room class
-class HotelRoom(object):
+class Hotel(object):
 
     def __init__(self):
         self._price = 0
         self._room_info = None
         self._availability = None
 
-    @property
-    def price(self):
-        return self._price
-
-    @price.setter
-    def price(self, val):
-        self._price = val
-        return self._price
-
-    @property
-    def room_info(self):
-        return self._room_info
-
-    @property
-    def availability(self):
-        return self._availability
-
-    @availability.setter
-    def availability(self, val):
-        self._availability = val
-        return self._availability
-'''
-    @availability.setter
-    def availability(self, val):
-        val = self.book_room
-        return val
-'''
-
-'''
-    @property
-    def book_room(self):
-        self.availability = False
-        return self.availability
-'''
 # Create subroom classes like (1 bed room, 2 bed room, king suite, penthouse)
 
 class Penthouse(HotelRoom):
@@ -242,6 +208,7 @@ def check_in_or_out_confirmation(confirmation):
     pass
 
 # TODO: Create list of rooms that are available to stay at in the hotel.
+# This should be an attribute of the hotel. I should create in the beginning.
 room_list = {
 'Penthouse' : [5, Penthouse()],
 'King' : [20, King()],
@@ -266,7 +233,7 @@ date_check_out = dt.datetime.strptime(format_dates(check_out), '%Y-%m-%d').date(
 print(date_check_out)
 
 print(f'''So you would like to check in on {check_in} and check out on {check_out}
-for a total of {(date_check_out - date_check_in).days} days. Is this correct?
+for a total of {(date_check_out - date_check_in).days} nights. Is this correct?
 ''')
 confirmation = input('Enter Y to confirm or N to change your dates: ')
 valid_confirmation = confirmation_string_validation(confirmation)
@@ -292,5 +259,6 @@ user_room_type = room_type_string_validation(room_type, room_type_list, room_typ
 print(f'A {user_room_type} room has been booked. Your room number is {random.randint(0,51)}')
 room_list[user_room_type] = room_list[user_room_type][0] - 1
 
-# TODO: Maybe have a sort of front desk usability for an employee
-# to make a booking for someone over the phone
+# Think I will end the code here as I feel I am venturing out of
+# practicing classes. Did not add the ability to book certain dates
+# as that is just writing a conditional statement using datetime
