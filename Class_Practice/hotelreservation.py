@@ -159,8 +159,8 @@ Availability:{broom_closet.availability}
 
 # TODO: Be able to book the room for the dates the customer wants
 
-check_in = '12/1/2019'
-check_out = '12/6/2019'
+#check_in = '12/1/2019'
+#check_out = '12/6/2019'
 
 print("Hello! Welcome to the Plaza NYC. Please enter your check-in and check-out days: ")
 
@@ -218,14 +218,10 @@ room_list = {
 'Broom Closet' : [1, Broom_Closet()]
 }
 
-
-# Commented out for testing. UNCOMMENT WHEN ENTERING PRODUCTION!!!!!!!
-'''
 check_in = input('Check-in (mm/dd/yyyy)>> ')
 date_validation(check_in, 'in')
 check_out = input('Check-out (mm/dd/yyyy)>> ')
 date_validation(check_out, 'out')
-'''
 
 date_check_in = dt.datetime.strptime(format_dates(check_in), '%Y-%m-%d').date()
 print(date_check_in)
