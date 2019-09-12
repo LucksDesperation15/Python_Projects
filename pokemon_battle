@@ -1,0 +1,153 @@
+import random
+from enum import Enum
+
+DamageTypes = Enum('DamageTypes', 'DAMAGING DEFENSE HEALING SPECIAL')
+Types = Enum('Types', 'NORMAL')
+
+class Pokemon():
+
+    level = 50
+
+    def __init__(self, name, health, type, moves, base_stats):
+        self.name = name
+        self.health = health
+        self.type = type
+        self.moves = moves
+        self.base_stats = base_stats
+        self.max_health = health
+
+# Could assign tiers as well so move set is fair
+class Moves():
+
+    count = 0
+
+    def __init__(self, name, move_type, move_stat_type, move_stat):
+        self.name = name
+        self.move_type = move_type
+        self.move_stat_type = move_stat_type
+        self.move_stat = move_stat
+
+
+red_base_stats = {
+'Attack' : 40,
+'Defense' : 60,
+'Sp. Attack' : 20,
+'Sp. Defense': 55,
+'Speed' : 45
+}
+gary_base_stats = {
+'Attack' : 60,
+'Defense' : 20,
+'Sp. Attack' : 55,
+'Sp. Defense': 40,
+'Speed' : 30
+}
+
+# Should make different stages of multipliers in a dic format
+stat_multiplier = .25
+
+level_dmg_calc = (((2 * Pokemon.level) / 5) +2)
+
+# Intent of this list was to have this be the 'master' version of the move stats
+# so in the future if I want to add, delete or change any of the moves I can access
+# this list directly instead of having to go to a class.
+
+move_data = [
+('Headbutt', 'DAMAGING', 'NORMAL', 70), ('Fetal Position', 'DEFENSE','NORMAL', 40),
+('Eat Spinach', 'HEALING','NORMAL', 60), ('Look Around', 'SPECIAL','NORMAL', 0),
+('Tackle','DAMAGING','NORMAL', 45), ('Flex', 'DEFENSE','NORMAL', 70),
+('Drink Juicebox', 'HEALING','NORMAL', 30), ('Take to the Sky', 'SPECIAL','NORMAL', 20)
+]
+
+moves = {}
+
+for name, move_type, move_stat_type, move_stat in move_data:
+    moves[name] = Moves(name, move_type, move_stat_type, move_stat)
+
+red_moves = {
+1 : moves['Headbutt'],
+2 : moves['Fetal Position'],
+3 : moves['Eat Spinach'],
+4 : moves['Look Around']
+}
+
+gary_moves = {
+1 : moves['Tackle'],
+2 : moves['Flex'],
+3 : moves['Drink Juicebox'],
+4 : moves['Take to the Sky']
+}
+
+def battle_move(who, attack_who, whose_move):
+    if who.moves[whose_move].move_type == 'DAMAGING':
+        who_dmg = who.moves[whose_move].move_stat
+        attack_who.health -= round((((level_dmg_calc * who_dmg * (who.base_stats['Attack']/attack_who.base_stats['Defense'])) / 50) + 2))
+        print(f'\n{who.name} used {who.moves[whose_move].name}')
+    elif who.moves[whose_move].move_type == 'DEFENSE':
+        if who.moves[whose_move].count < 6:
+            who_dmg = who.moves[whose_move].move_stat
+            who.base_stats['Defense'] += (who_dmg * stat_multiplier)
+            who.moves[whose_move].count += 1
+            print(f'\n{who.name} used {who.moves[whose_move].name}')
+        else:
+            print(f'{who.name}\'s {who.moves[int(whose_move)].move_type.lower()} is maxed out!')
+    elif who.moves[whose_move].move_type == 'HEALING':
+        who_dmg = who.moves[whose_move].move_stat
+        if who.health == who.max_health:
+            print('Already at full health!')
+        who.health = min(who.max_health, max(0, who.health + who_dmg))
+        print(f'\n{who.name} used {who.moves[whose_move].name}')
+    elif who.moves[whose_move].move_type == 'SPECIAL':
+        who_dmg = who.moves[whose_move].move_stat
+        attack_who.health -= who_dmg
+        print(f'\n{who.name} used {who.moves[whose_move].name}')
+
+def battle(p1, opp):
+    while p1.health > 0 and opp.health > 0:
+        print('\nIt is {}\'s turn'.format(p1.name))
+        print(f'Your remaining health: {p1.health}')
+        print('{}\'s remaining health: {}'.format(opp.name, opp.health))
+        char_diff = max(len(red_moves[1].name), len(red_moves[2].name)) - min(len(red_moves[1].name), len(red_moves[2].name))
+        if len(red_moves[1].name) > len(red_moves[2].name):
+            print(f'''
+{red.name}\'s Moves:
+
+1.{red_moves[1].name}''' + ''' ''' * char_diff + f'''3.{red_moves[3].name}
+
+2.{red_moves[2].name}''' + ''' ''' * (char_diff* 2) + f'''4.{red_moves[4].name}
+
+            ''')
+        else:
+                        print(f'''
+{red.name}\'s Moves:
+
+1.{red_moves[1].name}''' + ''' ''' * (char_diff * 2) + f'''3.{red_moves[3].name}
+
+2.{red_moves[2].name}''' + ''' ''' * char_diff + f'''4.{red_moves[4].name}
+
+                        ''')
+
+        p1_move = input('Please enter an attack: ')
+        if int(p1_move.isdigit()):
+            p1_move = int(p1_move)
+        elif p1_move.replace(" ", "").isalpha() and p1_move.title() in [v.name for v in p1.moves.values()]:
+            p1_move = p1_move.title()
+            p1_move = [k for k,v in p1.moves.items() if p1_move in (k, v.name)].pop()
+        else:
+            print('%s does not know that move. Please enter a valid move' % p1.name)
+            continue
+        battle_move(p1, opp, p1_move)
+        opp_move = random.randint(1,4)
+        battle_move(opp, p1, opp_move)
+        if p1.health <= 0 or opp.health <= 0:
+            if p1.health < opp.health:
+                print(f'{p1.name} has fainted!\n{opp.name} won!')
+            else:
+                print(f'{opp.name} has fainted!\n{p1.name} has won!')
+
+
+red = Pokemon('Red', 100, 'water', red_moves, red_base_stats)
+gary = Pokemon('Gary', 100,'fire', gary_moves, gary_base_stats)
+
+
+battle(red, gary)
