@@ -1,0 +1,75 @@
+#Implementation of merge sort
+# Merge sort is not an in place sorting algorithm but it is stable
+# The time complexity for merge sort is O(N lg N)
+# The space complexity for merge sort depends on the type of input but for arrays
+# is O(N)
+# Very useful for real world applications where memory is not an issue
+
+import random
+
+def combine_sorted_lists(list_one, list_two):
+    list_one_index = 0
+    list_two_index = 0
+    merged_list = []
+
+    # Makes sure that all of the inputs in each half are gone through and sorted
+    while list_one_index < len(list_one) and list_two_index < len(list_two):
+
+        if list_one[list_one_index] <= list_two[list_two_index]:
+            merged_list.append(list_one[list_one_index])
+            list_one_index += 1
+        else:
+            merged_list.append(list_two[list_two_index])
+            list_two_index += 1
+
+    # Moves the leftovers in a list one after list two has been exhausted
+    while list_one_index < len(list_one):
+        merged_list.append(list_one[list_one_index])
+        list_one_index += 1
+
+    # Moves the leftovers in a list two after list one has been exhausted
+    while list_two_index < len(list_two):
+        merged_list.append(list_two[list_two_index])
+        list_two_index += 1
+
+    return merged_list
+
+def merge_sort(the_list):
+
+    #Base case for merge sort since single element lists are already sorted
+    if len(the_list) <= 1:
+        return the_list
+
+    # Finds the middle of the array and divides it in to halves until it reaches base case
+    middle_index = len(the_list) // 2
+    left = the_list[:middle_index]
+    right = the_list[middle_index:]
+
+    # Recursively splits the input until base case of 1 element
+    left_sorted = merge_sort(left)
+    right_sorted = merge_sort(right)
+
+    return combine_sorted_lists(left_sorted, right_sorted)
+
+# example_array = [23, 1, 9, 45, 990, 78, 34, 102, 587, 2901]
+# print(merge_sort(example_array))
+
+def create_random_array():
+
+    # Sets a certain amount of times to loop
+    counter = random.randint(1,100)
+    random_array = []
+
+    # Creates random integers until the random counter number reaches zero
+    while counter > 0:
+        random_int = random.randint(1,10000)
+        random_array.append(random_int)
+        counter -= 1
+
+    print(random_array)
+    print(len(random_array))
+    return random_array
+
+finalized_soreted_array = merge_sort(create_random_array())
+#print(finalized_soreted_array)
+#print(len(finalized_soreted_array))
